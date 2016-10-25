@@ -30,10 +30,16 @@
   },
   "homepage": "https://github.com/tomaskavka/personal-id#readme",
   "devDependencies": {
+    "babel-eslint": "^7.0.0",
     "babel-plugin-transform-class-properties": "^6.18.0",
     "babel-preset-es2015": "^6.18.0",
     "babel-register": "^6.18.0",
     "chai": "^3.5.0",
+    "eslint": "^3.8.1",
+    "eslint-config-airbnb": "^12.0.0",
+    "eslint-plugin-import": "^1.16.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.4.1",
     "karma": "^1.3.0",
     "mocha": "^3.1.2"
   }
