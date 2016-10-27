@@ -1,82 +1,120 @@
 import locales from './locale';
 
 export default class PersonalId {
-
-  static defaults = {
-    localeCodes: [
-      'cs',
+  static DEFAULT_MIN = new Date('1900-01-01');
+  static DEFAULT_MAX = new Date();
+  static DEFAULT_LOCALE = 'cs';
+  static DEFAULTS = {
+    locales: [
+      PersonalId.DEFAULT_LOCALE,
     ],
+    min: PersonalId.DEFAULT_MIN,
+    max: PersonalId.DEFAULT_MAX,
   };
+  static MALE = 'male';
+  static FEMALE = 'female'
 
   pin = null;
-  locales = {};
-  state = {
-    set: false,
+  validation = {
     valid: false,
+    locales: {},
+    data: null,
   };
-  validationResults = {};
 
-  constructor(pin, options = {}) {
-    this.setPin(pin);
+  constructor(pin, userOpts = {}) {
+    if (typeof pin === 'undefined' || pin === null) {
+      throw Error('Personal ID: param \'pin\' has to be defined.'); // @TODO: add link to docs, how to add locale
+    }
 
-    options = Object.assign(PersonalId.defaults, options);
+    this.opts = Object.assign(PersonalId.DEFAULTS, userOpts);
+    this.pin = pin.toString();
 
-    // Define all locales
-    options.localeCodes.forEach(code => {
-      this.defineLocale(code, locales[code]);
+    if (typeof pin !== 'string') {
+      console.warn(
+        `Personal ID: param 'pin' should be a string, other types have side effects. Pin value after convert to a string: '${this.pin}'.`
+      ); // @TODO: add link to docs
+    }
+
+    // Add locales
+    this.opts.locales.forEach((code) => {
+      this.addLocale(code, locales[code]);
     });
-
-    // Validate
-    this.validate();
   }
 
-  defineLocale(code, options) {
-    this.locales[code] = options;
+  addLocale(code, provider) {
+    if (typeof code !== 'string') {
+      throw Error('Personal ID: param \'code\' has to be defined.');
+    }
+
+    if (typeof provider !== 'function') {
+      throw Error('Personal ID: param \'provider\' has to be a function.');
+    }
+
+    this.validation.locales[code] = new provider(); // eslint-disable-line new-cap
   }
 
   validate() {
-    if (!this.state.set) {
-      return false;
-    }
+    const codes = Object.keys(this.validation.locales);
+    this.validation.result = null;
 
-    this.state.valid = false;
+    for (let i = 0; i < codes.length; i += 1) {
+      const locale = this.validation.locales[codes[i]];
+      locale.validate(this.pin, this.opts.min, this.opts.max);
 
-    Object.keys(this.locales).forEach(code => {
-      const match = this.pin.toString().match(this.locales[code].regExp);
-      if (match !== null) {
-        this.state.valid = true;
+      if (locale.valid || this.validation.data === null) {
+        this.validation.valid = locale.valid;
+        this.validation.data = {
+          birthDate: locale.birthDate,
+          gender: locale.gender,
+        };
       }
-
-      this.validationResults[code] = match;
-    });
-  }
-
-  setLocale(code, options) {
-
-  }
-
-  getLocales() {
-    return Object.keys(this.locales);
-  }
-
-  setPin(pin) {
-    if (typeof pin === 'undefined' || pin === null) {
-      return false;
     }
-
-    this.pin = pin;
-    this.state.set = true;
   }
 
   isValid(code) {
-    if (this.state.valid === null) {
-      this.validate();
+    this.validate();
+
+    if (typeof code === 'undefined') {
+      return this.validation.valid;
     }
 
-    return (
-      typeof code !== 'undefined'
-      ? this.validationResults[code] !== null
-      : this.state.valid
-    );
+    if (typeof this.validation.locales[code] === 'undefined') {
+      // @TODO: add link to docs, how to add locale
+      console.warn('Personal ID: locale isn\'t added.'); // eslint-disable-line no-console
+      return false;
+    }
+
+    return this.validation.locales[code].valid;
+  }
+
+  prepare() {
+    if (this.validation.data === null || this.validation.data.pin !== this.pin) {
+      this.validate();
+    }
+  }
+
+  getBirthDate() {
+    this.prepare();
+    return this.validation.data.birthDate;
+  }
+
+  isMale() {
+    this.prepare();
+
+    if (this.validation.data.gender === null) {
+      return null;
+    }
+
+    return (this.validation.data.gender === PersonalId.MALE);
+  }
+
+  isFemale() {
+    this.prepare();
+
+    if (this.validation.data.gender === null) {
+      return null;
+    }
+
+    return (this.validation.data.gender === PersonalId.FEMALE);
   }
 }
