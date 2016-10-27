@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test-node": "node node_modules/mocha/bin/mocha test --compilers js:babel-register",
+    "cover": "node node_modules/nyc/bin/nyc --require babel-register -r lcov -r text -r html npm run test-node",
+    "lint": "eslint src test || true",
+    "test-node": "node node_modules/mocha/bin/mocha test -c --compilers js:babel-register || true",
     "test-browser": "grunt dist && node node_modules/karma/bin/karma start --single-run --browsers PhantomJS",
     "test": "npm run test-node && npm run test-browser"
   },
@@ -41,6 +43,8 @@
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.4.1",
     "karma": "^1.3.0",
-    "mocha": "^3.1.2"
+    "mocha": "^3.1.2",
+    "nyc": "^8.3.2",
+    "sinon": "^1.17.6"
   }
 }
