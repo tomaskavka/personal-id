@@ -1,6 +1,6 @@
-import Pin from '../personal-id';
+import Base from './base';
 
-export class LocaleProvider {
+export default class LocaleProvider extends Base {
   static VALIDATION_REGEXP = /^\s*(\d\d)(\d\d)(\d\d)[ /]*(\d\d\d)(\d?)\s*$/;
   static RULE_CONTROL_NUMBER_FROM = 1954;
   static RULE_MONTH_FROM = 2004;
@@ -9,24 +9,11 @@ export class LocaleProvider {
 
   code = 'cs';
 
-  constructor() {
-    this.setDefaults();
-  }
-
-  setDefaults() {
-    this.pin = null;
-    this.valid = false;
-    this.year = null;
-    this.month = null;
-    this.day = null;
-    this.gender = null;
-    this.ext = null;
-    this.controlNumber = null;
-    this.birthDate = null;
-    this.match = null;
-  }
-
   setYear(year, controlNumber) {
+    if (typeof year === 'undefined' || year === null) {
+      throw new Error('Personal ID: param \'year\' has to be defined.'); // @TODO: add link to docs
+    }
+
     this.year = parseInt(year, 10);
 
     if (typeof controlNumber === 'undefined') {
@@ -37,11 +24,15 @@ export class LocaleProvider {
   }
 
   setMonthAndGender(month) {
-    this.gender = Pin.MALE;
+    if (typeof month === 'undefined' || month === null) {
+      throw new Error('Personal ID: param \'month\' has to be defined.'); // @TODO: add link to docs
+    }
+
+    this.gender = Base.MALE;
     this.month = parseInt(month, 10);
 
     if (month > 50) {
-      this.gender = Pin.FEMALE;
+      this.gender = Base.FEMALE;
       this.month -= 50;
 
       if (month > 70 && this.year >= LocaleProvider.RULE_MONTH_FROM) {
@@ -52,16 +43,13 @@ export class LocaleProvider {
     }
   }
 
-  getData() {
-    return {
-      pin: this.pin,
-      valid: this.valid,
-      gender: this.gender,
-      birthDate: this.birthDate,
-    };
-  }
-
   validate(pin, min, max) {
+    this.setDefaults();
+
+    if (typeof pin === 'undefined' || pin === null) {
+      throw new Error('Personal ID: param \'pin\' has to be defined.'); // @TODO: add link to docs
+    }
+
     const match = pin.match(LocaleProvider.VALIDATION_REGEXP);
     this.valid = (match !== null);
 
@@ -70,7 +58,11 @@ export class LocaleProvider {
     }
 
     const [fullMatch, year, month, day, ext, controlNumber] = match;
-    this.controlNumber = (controlNumber === '' ? undefined : parseInt(controlNumber, 10));
+    this.controlNumber = (
+      controlNumber !== ''
+      ? parseInt(controlNumber, 10)
+      : undefined
+    );
     this.pin = pin;
     this.match = fullMatch;
     this.setYear(year, this.controlNumber);
@@ -105,5 +97,3 @@ export class LocaleProvider {
     return this.valid;
   }
 }
-
-// export default Pin.addLocale('cs', new LocaleProvider());

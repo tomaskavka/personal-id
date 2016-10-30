@@ -4,13 +4,6 @@ export default class PersonalId {
   static DEFAULT_MIN = new Date('1900-01-01');
   static DEFAULT_MAX = new Date();
   static DEFAULT_LOCALE = 'cs';
-  static DEFAULTS = {
-    locales: [
-      PersonalId.DEFAULT_LOCALE,
-    ],
-    min: PersonalId.DEFAULT_MIN,
-    max: PersonalId.DEFAULT_MAX,
-  };
   static MALE = 'male';
   static FEMALE = 'female'
 
@@ -26,10 +19,15 @@ export default class PersonalId {
       throw Error('Personal ID: param \'pin\' has to be defined.'); // @TODO: add link to docs, how to add locale
     }
 
-    this.opts = Object.assign(PersonalId.DEFAULTS, userOpts);
+    this.opts = Object.assign({
+      locales: [PersonalId.DEFAULT_LOCALE],
+      min: PersonalId.DEFAULT_MIN,
+      max: PersonalId.DEFAULT_MAX,
+    }, userOpts);
     this.pin = pin.toString();
 
     if (typeof pin !== 'string') {
+      // eslint-disable-next-line no-console
       console.warn(
         `Personal ID: param 'pin' should be a string, other types have side effects. Pin value after convert to a string: '${this.pin}'.`
       ); // @TODO: add link to docs
@@ -55,18 +53,15 @@ export default class PersonalId {
 
   validate() {
     const codes = Object.keys(this.validation.locales);
-    this.validation.result = null;
+    this.validation.valid = false;
 
     for (let i = 0; i < codes.length; i += 1) {
       const locale = this.validation.locales[codes[i]];
       locale.validate(this.pin, this.opts.min, this.opts.max);
 
-      if (locale.valid || this.validation.data === null) {
+      if (locale.valid || this.validation.data === null || this.validation.data.pin !== this.pin) {
         this.validation.valid = locale.valid;
-        this.validation.data = {
-          birthDate: locale.birthDate,
-          gender: locale.gender,
-        };
+        this.validation.data = locale.getData();
       }
     }
   }
@@ -95,7 +90,14 @@ export default class PersonalId {
 
   getBirthDate() {
     this.prepare();
+
     return this.validation.data.birthDate;
+  }
+
+  getCode() {
+    this.prepare();
+
+    return this.validation.data.code;
   }
 
   isMale() {

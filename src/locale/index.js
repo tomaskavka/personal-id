@@ -1,4 +1,4 @@
-import { LocaleProvider as cs } from './cs';
+import cs from './cs';
 
 const locales = {
   cs,
