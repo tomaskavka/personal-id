@@ -29,6 +29,7 @@ var PersonalId = function () {
       data: null
     };
 
+    console.log(_locale2.default);
     if (typeof pin === 'undefined' || pin === null) {
       throw Error('Personal ID: param \'pin\' has to be defined.'); // @TODO: add link to docs, how to add locale
     }

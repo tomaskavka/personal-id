@@ -1,8 +1,8 @@
-import cs from './cs';
+import csLocale from './cs';
 
-const locales = {
-  cs,
-  sk: cs, // same validation process (Czechoslovakia)
+export default {
+  cs: csLocale,
+  sk: csLocale,
 };
-
-export default locales;
+export const cs = csLocale;
+export const sk = csLocale; // same validation process (Czechoslovakia)

@@ -15,6 +15,7 @@ export default class PersonalId {
   };
 
   constructor(pin, userOpts = {}) {
+    console.log(locales);
     if (typeof pin === 'undefined' || pin === null) {
       throw Error('Personal ID: param \'pin\' has to be defined.'); // @TODO: add link to docs, how to add locale
     }

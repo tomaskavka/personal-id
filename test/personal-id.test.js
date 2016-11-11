@@ -4,10 +4,10 @@
 /* global afterEach */
 /* eslint-disable no-unused-expressions */
 
-import Pin from './../src/personal-id'; // eslint-disable-line global-require
-import FakeLocaleProvider from './lib/fakeLocale'; // eslint-disable-line global-require
 import { expect } from 'chai'; // eslint-disable-line global-require, import/no-extraneous-dependencies
 import sinon from 'sinon'; // eslint-disable-line global-require, import/no-extraneous-dependencies
+import Pin from './../src/personal-id'; // eslint-disable-line global-require
+import FakeLocaleProvider from './lib/fakeLocale'; // eslint-disable-line global-require
 
 const opts = {
   locales: [],
