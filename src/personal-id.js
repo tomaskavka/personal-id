@@ -62,6 +62,7 @@ export default class PersonalId {
       if (locale.valid || this.validation.data === null || this.validation.data.pin !== this.pin) {
         this.validation.valid = locale.valid;
         this.validation.data = locale.getData();
+        this.validation.pin = this.validation.data.pin;
       }
     }
   }
@@ -86,6 +87,12 @@ export default class PersonalId {
     if (this.validation.data === null || this.validation.data.pin !== this.pin) {
       this.validate();
     }
+  }
+
+  getPin() {
+    this.prepare();
+
+    return this.validation.data.pin;
   }
 
   getBirthDate() {

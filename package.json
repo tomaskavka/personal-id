@@ -1,6 +1,6 @@
 {
   "name": "personal-id",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Personal identification number validation and utils",
   "main": "personal-id.js",
   "directories": {

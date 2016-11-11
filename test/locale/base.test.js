@@ -21,6 +21,8 @@ describe('Personal ID - base locale', () => {
 
       expect(locale.pin)
         .to.equal(null);
+      expect(locale.pin)
+        .to.equal(null);
       expect(locale.valid)
         .to.be.false;
       expect(locale.year)

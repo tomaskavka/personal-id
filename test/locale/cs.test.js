@@ -21,6 +21,36 @@ describe('Personal ID - cs locale', () => {
     locale = new LocaleProvider();
   });
 
+  describe('setPin()', () => {
+    it('should be a null', () => {
+      locale.setPin(null);
+      expect(locale.pin)
+        .to.equal(null);
+
+      locale.setPin(['890416/1147']);
+      expect(locale.pin)
+        .to.equal(null);
+
+      locale.setPin('12');
+      expect(locale.pin)
+        .to.equal(null);
+    });
+
+    it('should set a pin', () => {
+      locale.setPin('8904164005');
+      expect(locale.pin)
+        .to.equal('890416/4005');
+
+      locale.setPin('890416/4005');
+      expect(locale.pin)
+        .to.equal('890416/4005');
+
+      locale.setPin('890416400');
+      expect(locale.pin)
+        .to.equal('890416/400');
+    });
+  });
+
   describe('setYear()', () => {
     it('should throw an error because of the missing year', () => {
       expect(() => {
@@ -139,16 +169,6 @@ describe('Personal ID - cs locale', () => {
       locale.validate('90416/5501');
       expect(locale.pin)
         .to.equal(null);
-    });
-
-    it('should set a pin', () => {
-      locale.validate('8904164005');
-      expect(locale.pin)
-        .to.equal('8904164005');
-
-      locale.validate('890416/4005');
-      expect(locale.pin)
-        .to.equal('890416/4005');
     });
 
     it('should be invalid', () => {

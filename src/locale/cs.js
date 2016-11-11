@@ -9,6 +9,16 @@ export default class LocaleProvider extends Base {
 
   code = 'cs';
 
+  setPin(pin) {
+    if (pin === null || typeof pin !== 'string') {
+      this.pin = null;
+    } else {
+      const match = pin.match(/([\d]{6})\/?([\d]{3,4})/);
+
+      this.pin = (match === null ? null : `${match[1]}/${match[2]}`);
+    }
+  }
+
   setYear(year, controlNumber) {
     if (typeof year === 'undefined' || year === null) {
       throw new Error('Personal ID: param \'year\' has to be defined.'); // @TODO: add link to docs
@@ -63,8 +73,8 @@ export default class LocaleProvider extends Base {
       ? parseInt(controlNumber, 10)
       : undefined
     );
-    this.pin = pin;
     this.match = fullMatch;
+    this.setPin(pin);
     this.setYear(year, this.controlNumber);
     this.setMonthAndGender(month);
     this.day = parseInt(day, 10);

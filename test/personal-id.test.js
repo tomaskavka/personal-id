@@ -178,6 +178,37 @@ describe('Personal ID', () => {
     });
   });
 
+  describe('getPin()', () => {
+    let p;
+
+    beforeEach(() => {
+      p = new Pin('', opts);
+      p.addLocale('fake', FakeLocaleProvider);
+    });
+
+    it('should be a null', () => {
+      p.pin = 'PersonalID';
+      expect(p.getPin())
+        .to.equal(null);
+    });
+
+    it('should be a normalized pin', () => {
+      p.pin = 'PersonalID1989';
+      expect(p.getPin())
+        .to.equal('PersonalID1989');
+    });
+
+    it('should be a normalized pin and then null after a pin change', () => {
+      p.pin = 'PersonalID1989';
+      expect(p.getPin())
+        .to.equal('PersonalID1989');
+
+      p.pin = 'PersonalID';
+      expect(p.getPin())
+        .to.equal(null);
+    });
+  });
+
   describe('getBirthDate()', () => {
     let p;
 
